@@ -10,7 +10,7 @@ Some fun facts about me:
 
 1. I'm allergic to trees.
 2. I've never tried butter toast before.
-3. My favor color is purple.
+3. My favorite color is purple.
 
 ![picture of snow leopard mama and baby](https://pbs.twimg.com/media/GzYlia3XMAAWfm4?format=jpg&name=4096x4096)
 
