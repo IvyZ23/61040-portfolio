@@ -10,9 +10,9 @@ Some fun facts about me:
 
 1. I'm allergic to trees.
 2. I've never tried butter toast before.
-3. My favorite color is purple.
+3. I'm a cat person.
 
-![picture of snow leopard mama and baby](https://pbs.twimg.com/media/GzYlia3XMAAWfm4?format=jpg&name=4096x4096)
+![picture of snow leopard mama and baby](https://static.wikia.nocookie.net/luoxiaohei/images/e/ef/Wechat_Stickers_2.gif/revision/latest?cb=20240207211057)
 
 # Table of Contents
 
