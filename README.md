@@ -4,7 +4,7 @@ This will be your portfolio repository. Use this as a [template repository](http
 
 # About Me
 
-_My name is Ivy Zhu, a junior majoring in 6-3._
+My name is Ivy Zhu, a junior majoring in 6-3.
 
 Some fun facts about me:
 
@@ -12,7 +12,7 @@ Some fun facts about me:
 2. I've never tried butter toast before.
 3. I'm a cat person.
 
-![picture of snow leopard mama and baby](https://static.wikia.nocookie.net/luoxiaohei/images/e/ef/Wechat_Stickers_2.gif/revision/latest?cb=20240207211057)
+![gif of Luo Xiaohei](https://static.wikia.nocookie.net/luoxiaohei/images/e/ef/Wechat_Stickers_2.gif/revision/latest?cb=20240207211057)
 
 # Table of Contents
 
