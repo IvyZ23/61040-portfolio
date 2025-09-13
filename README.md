@@ -16,4 +16,10 @@ Some fun facts about me:
 
 # Table of Contents
 
-[Link to Assignment 1](assignments/assignment1.md)
+## Assignments:
+
+-   [Link to Assignment 1](assignments/assignment1.md)
+
+## Problem Sets:
+
+-   [Link to Problem Set 1](psets/pset1.md)
