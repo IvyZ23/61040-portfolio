@@ -3,11 +3,11 @@
 ## Exercise 1
 
 1. An invariant of the state is that users shouldn't be able to purchase more of an item than was requested. Another invariant is that each purchased item should be a requested item. The second invariant is more important because buying an item the owner of the registry did not ask for would defeat the purpose of the concept. An action that is affected by this is purchase. The action preserves this invariant by requiring the registry to at least request one of the item the user is trying to buy.
-2. removeItem can potentially break the invariant. If a user had already purchased a requested item, then the recipient deleted the item, this would result in an unwanted purchased item. To fix this, a possible solution would be to prevent the recipient from deleting any item that has already been purchased.
-3. The registry can be opened and closed repeatedly. As stated in the spec of create, the registry is closed when it is first created so we have to allow the owner of the registry to open it once they are ready. Allowing repeated openings and closings would also allow users to prepare the registry (e.g. add/update all the items first) before opening it to the purchasers.
-4. It is okay not to have a delete action because the registry owner can close the registry. However, this might introduce unneccesary clutter on the registry owner's side.
+2. removeItem can potentially break the invariant. If a user had already purchased a requested item, then the recipient tries to delete the item, this would result in an unwanted purchased item. To fix this, a possible solution would be to prevent the recipient from deleting any item that has already been purchased.
+3. The registry can be opened and closed repeatedly. The specs of open and close do not check if the registry had already been opened/closed before. As stated in the spec of create, the registry is closed when it is first created so we have to allow the owner of the registry to open it once they are ready and close it again when they're done. Allowing repeated openings and closings would allow users to prepare the registry (e.g. add/update all the items first) before opening it to the purchasers. They may also want to reopen a registry if they did not receive all the items they requested on there.
+4. It is okay not to have a delete action because the registry owner can close the registry.
 5. Two common queries that mutate the state are addItem and purchase.
-6. To implement the feature of masking purchases from the recipient, we can add a new property to the registry state (a flag Visible). For the create action, we would add an extra parameter to allow registry creators to set Visible.
+6. To implement the feature of masking purchases from the recipient, we can add a new property to the registry state (a flag Visible). For the create action, we would add an extra parameter to allow registry creators to set Visible. If Visible is set to false, then the purchase information will be masked from them.
 7. We only need to differentiate and identify items. We do not need details such as names and prices because we only need to know if an item is requested and if it has been bought. A SKU code is enough information for that.
 
 ## Exercise 2
@@ -47,7 +47,7 @@
     -   **requires** username does not already exist
     -   **effects** creates new user
 
--   confirm(username: String, token: String)
+-   confirm(user: User, token: String)
 
     -   **requires** none
     -   **effects** update user to confirmed if token matched user's confirm token
@@ -60,28 +60,36 @@
 
 **concept** PersonalAccessToken
 **purpose** grant users access to Github from external sources
-**principle** A registered user creates a token and can use it to authenticate to receive access
-
--   create (user: User): (token: String)
-
-    -   **requires** user to exist
-    -   **effects** creates token for user
-
--   authenticate (user: User): (token: String)
-
-    -   **requires** user to exist
-    -   **effects** creates token for user
+**principle** A registered Github user creates a token and can use it to authenticate to receive access. The user can set how long the token lasts before it expires and what the token can be used to access (the scope). Once the time comes, the token expires and is rendered invalid.
 
 **state**
 
--   a set of users with
-    -   a username Username
-    -   a password Password
-    -   a token Token
+-   a set of Tokens with
+    -   a token value String
+    -   a user User
+    -   an expiration time Time
+    -   an access scope Scope
 
-Unlike PasswordAuthentication, which happens directly on GitHub’s website and provides full access to the user’s account, PersonalAccessToken is used from external sources like the command line or the GitHub API and grants more limited access (such as to repositories).
+**actions**
 
-I think the Github page can be improved by being more clear on the differences between using password and a token. Most of the time, they mention them as similar entities.
+-   createToken (user: User, scope: Scope, expiration: Time): (token: String)
+
+    -   **requires** none
+    -   **effects** creates token for user
+
+-   verifyToken (user: User, token: String):
+
+    -   **requires** none
+    -   **effects** checks for a Token owned by user to see if it matches
+
+-   deleteToken(token: Token):
+
+    -   **requires** requires token to exist
+    -   **effects** deletes token from the set
+
+Unlike PasswordAuthentication, which happens directly on GitHub’s website and provides full access to the user’s account, PersonalAccessToken is used from external sources like the command line or the GitHub API and grants more limited access (such as to specifc repositories).
+
+The Github page referred the access tokens and passwords as very similar concepts, that they were both for accessing Github. They can make the difference clearer by stating the difference in access the two provides.
 
 ## Exercise 4
 
@@ -93,56 +101,40 @@ I think the Github page can be improved by being more clear on the differences b
 **state**
 
 -   a set of URLs with
-    -   an redirect link Original
+    -   a redirect link Original
     -   a shortened link Shortened
     -   a user User
 
 **actions**
 
--   create (user: User, url: String, suffix: String): (shortenedURL: URL)
+-   create (user: User, url: String, suffix: String | None): (shortenedURL: URL)
 
     -   **requires** user to exist and suffix to not already exist
-    -   **effects** creates a shortened URL
+    -   **effects** creates a shortened URL using suffix or a random string if suffix is not provided
 
 -   delete (url: URL)
 
     -   **requires** url to exist
-    -   **effects** deletes url
+    -   **effects** deletes url from set
 
 ### Billable Hours Tracking
 
 **concept** Timesheet
-**purpose** Make sure companies are getting paid proportional to amount of time spent on project
-**principle** Company create projects. Employees can create a session, which contains information on when the session started, ended, what was to be done during this time, and for which project it is for.
+**purpose** Make sure companies are getting paid proportional to amount of time spent on services they provide
+**principle** Employees start a session when they're about to work. They input the start time and the tasks that are to be done. Once they're done with their tasks, they can end the session by inputing the end time.
 **state**
-
--   a set of Projects with
-
-    -   a name Name
-    -   a flag Complete
 
 -   a set of Sessions with
     -   a start time Start
     -   a end time End
-    -   a project Project
     -   an employee Employee
     -   a note to detail work done Note
 
 **actions**
 
--   createProject (name: String): (project: Project)
+-   startSession (employee: Employee, start: Time, note: String): (session: Session)
 
-    -   **requires** there doesn't already exist a project with given name
-    -   **effects** creates new project with a flag of incomplete
-
--   completeProject (project: Project): (project: Project)
-
-    -   **requires** project exists
-    -   **effects** updates the project's flag to complete
-
--   createSession (employee: Employee, start: Time, project: Project, note: String): (session: Session)
-
-    -   **requires** requires employee and project to exist
+    -   **requires** requires employee to exist
     -   **effects** creates a new session with pending end time
 
 -   endSession(session: Session, end: Time)
@@ -154,8 +146,8 @@ A way to combat someone forgetting to fill in end time is to send the employee a
 ### Conference Room Booking
 
 **concept** BookRoom
-**purpose** Prevent overbooking of rooms and allow users to find available rooms as quickly as possible
-**principle** The company or university can imput rooms available for booking and the time slots they available. Users can reserve or cancel reservations of these rooms at available times.
+**purpose** Ensure users that the room will be available when they need it
+**principle** The company or university input rooms available for booking and the time slots they available. Users can reserve or cancel reservations of these rooms at available times.
 **state**
 
 -   a set of Rooms with
@@ -167,13 +159,16 @@ A way to combat someone forgetting to fill in end time is to send the employee a
     -   a room Room
     -   a time Time
 
--   a set of Bookings with - a user User - a slot Slot
-    **actions**
+-   a set of Bookings with
+    -   a user User
+    -   a slot Slot
 
--   createRoom (name: String): (room: Room)
+**actions**
+
+-   addRoom (name: String): (room: Room)
 
     -   **requires** room with name does not already exist
-    -   **effects** creates room
+    -   **effects** adds room to set
 
 -   deleteRoom(room: Room)
 
@@ -182,19 +177,19 @@ A way to combat someone forgetting to fill in end time is to send the employee a
 
 -   addSlot(room: Room, time: Time)
 
-    -   **requires** room to exist and a time slot for that room not to exist already
+    -   **requires** room to exist and a slot at that time for that room not to exist already
     -   **effects** add new time slot for room
 
 -   deleteSLot(slot: Slot)
 
     -   **requires** slot to exist
-    -   **effects** deletes slot and bookings associated to it
+    -   **effects** deletes slot and bookings associated with it
 
--   book(user: User, slot: Slot): (booking: Booking)
+-   bookRoom(user: User, slot: Slot): (booking: Booking)
 
     -   **requires** user to exist and slot to exist and has not already been booked
     -   **effects** adds new booking to set
 
--   unbook(booking: Booking)
+-   unbookRoom(booking: Booking)
     -   **requires** booking to exist
     -   **effects** remove booking from set
