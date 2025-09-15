@@ -14,7 +14,7 @@
 
 1. **state**
 
--   a set of User with
+-   a set of Users with
     -   a username Username
     -   a password Password
 
@@ -31,9 +31,11 @@
 
 3. There must not be any two users who share the same username. It is preserved during user registration. If the username already exists, they will not be allowed to registered.
 
-4. **state**
+4.
 
--   a set of User with
+**state**
+
+-   a set of Users with
     -   a username Username
     -   a password Password
     -   an email Email
@@ -59,8 +61,10 @@
 ## Exercise 3
 
 **concept** PersonalAccessToken
-**purpose** grant users access to Github from external sources
-**principle** A registered Github user creates a token and can use it to authenticate to receive access. The user can set how long the token lasts before it expires and what the token can be used to access (the scope). Once the time comes, the token expires and is rendered invalid.
+
+**purpose** Grant users access to Github from external sources
+
+**principle** A registered Github user creates a token and can use it to authenticate to receive access. The user can set how long the token lasts before it expires and what the token can be used to access (the scope). Once expired, the token is rendered invalid.
 
 **state**
 
@@ -72,15 +76,15 @@
 
 **actions**
 
--   createToken (user: User, scope: Scope, expiration: Time): (token: String)
+-   createToken (user: User, scope: Scope, expiration: Time): (token: Token)
 
     -   **requires** none
-    -   **effects** creates token for user
+    -   **effects** creates new token for user
 
 -   verifyToken (user: User, token: String):
 
     -   **requires** none
-    -   **effects** checks for a Token owned by user to see if it matches
+    -   **effects** checks for a Token owned by user with matching value whose expiration time has not yet passed
 
 -   deleteToken(token: Token):
 
@@ -89,15 +93,18 @@
 
 Unlike PasswordAuthentication, which happens directly on GitHub’s website and provides full access to the user’s account, PersonalAccessToken is used from external sources like the command line or the GitHub API and grants more limited access (such as to specifc repositories).
 
-The Github page referred the access tokens and passwords as very similar concepts, that they were both for accessing Github. They can make the difference clearer by stating the difference in access the two provides.
+The Github page referred to the access tokens and passwords as very similar concepts, that they were both for accessing Github. They can make the difference clearer by stating the difference in access the two provides.
 
 ## Exercise 4
 
 ### URL Shortener
 
 **concept** URLShortener
-**purpose** provide users with more readable URLs for sharing
-**principle** The user provides a link they want shortened, perhaps with a suffix they would like the new shortened URL to use. If no suffix is provided, a random one is chosen. The user receives a shorter URL, which redirects to the URL they originally provided.
+
+**purpose** Provide users with more readable URLs for sharing
+
+**principle** The user provides a link they want shortened, perhaps with a suffix they would like the new shortened URL to use. If no suffix is provided, a random one is chosen. The user receives a shorter URL, which redirects to the URL they originally provided. Afterwards, the user can choose to delete the shortened URL or keep it.
+
 **state**
 
 -   a set of URLs with
@@ -114,14 +121,17 @@ The Github page referred the access tokens and passwords as very similar concept
 
 -   delete (url: URL)
 
-    -   **requires** url to exist
-    -   **effects** deletes url from set
+    -   **requires** URL to exist
+    -   **effects** deletes URL from set
 
 ### Billable Hours Tracking
 
 **concept** Timesheet
+
 **purpose** Make sure companies are getting paid proportional to amount of time spent on services they provide
+
 **principle** Employees start a session when they're about to work. They input the start time and the tasks that are to be done. Once they're done with their tasks, they can end the session by inputing the end time.
+
 **state**
 
 -   a set of Sessions with
@@ -145,9 +155,12 @@ A way to combat someone forgetting to fill in end time is to send the employee a
 
 ### Conference Room Booking
 
-**concept** BookRoom
+**concept** RoomBooking
+
 **purpose** Ensure users that the room will be available when they need it
+
 **principle** The company or university input rooms available for booking and the time slots they available. Users can reserve or cancel reservations of these rooms at available times.
+
 **state**
 
 -   a set of Rooms with
@@ -160,6 +173,7 @@ A way to combat someone forgetting to fill in end time is to send the employee a
     -   a time Time
 
 -   a set of Bookings with
+
     -   a user User
     -   a slot Slot
 
@@ -180,7 +194,7 @@ A way to combat someone forgetting to fill in end time is to send the employee a
     -   **requires** room to exist and a slot at that time for that room not to exist already
     -   **effects** add new time slot for room
 
--   deleteSLot(slot: Slot)
+-   deleteSlot(slot: Slot)
 
     -   **requires** slot to exist
     -   **effects** deletes slot and bookings associated with it
