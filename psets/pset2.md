@@ -19,8 +19,22 @@
 **then** URLShortening.delete(resource: String)
 
 ## Extending the Design
-- auth
-- user
-- link meta data
 
-- syncs -> 
+1.
+
+-   created by
+-   link meta data
+
+2. syncs:
+
+-   create shortening -> create new analytic for it, add to created by
+-   shortening translated to target -> increment
+-   user examines analytics -> return only their url analytics
+
+3.
+
+-   possible, change sync for registering (check if string provided, generate if not)
+-   possible, as mentioned earlier, use numbers to keep track of which words have been taken from a list of words
+-   not necessary, since analytics should only be avialable to the user that created the shortened URl. Other people do not need to see the total amount of times other people have visited the site.
+-   not necessary, partially done in the randomized string process
+-   could track them by something other than an user account, for ex, an email
