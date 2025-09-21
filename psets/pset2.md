@@ -10,7 +10,7 @@
 
 1. The first one is not registering a url for shortening, but to register a base URL that will be used later in shortened URLs. The second sync is actually registering a URL to be shortened so that it becomes a base URL + a random string.
 2. It is not always used because sometimes the variable name does not convery exactly what the argument is.
-3. The first two syncs happen when the user is requesting to execute an action. The third sync happebs when the action is excuted.
+3. The first two syncs happen when the user is requesting to execute an action. The third sync happens when the action is excuted.
 4. We won't need the first sync and for the second sync, the shortUrlBase will always be set to the domain.
 5. **sync** ExpireURL
 
@@ -22,19 +22,96 @@
 
 1.
 
--   created by
--   link meta data
+**concept** UserUrls
 
-2. syncs:
+**purpose** record keeping for urls a user makes
+
+**principle** after registering for a short url, save the url to the user. deleting the url will remove it from the user
+
+**state**
+
+-   a set of Users with
+    -   a set of shortUrls
+
+**actions**
+add (user: User, shortUrl: String)
+
+-   **requires** shortening to not already exist in user's set
+-   **effect** adds shortened url to user set
+
+delete (user: User, shortUrl: String)
+
+-   **requires** shortening to exist in user's set
+-   **effect** deletes shortened url to user set
+
+authorize (user: User, shortUrl: String)
+
+-   **effect** authorize if shortUrl is associated with user
+
+**concept** UrlMetaData
+
+**purpose** track number of times a shortened url was accessed as meta data for a user's analysis
+
+**principle** upon creation, keep track of meta data for that url. When the shortened url is deleted, the meta data is deleted as well.
+
+**state**
+
+-   a set of sortUrls with
+    -   a count timesAccessed
+
+**actions**
+create (shortUrl: String)
+
+-   **requires** shortened url to not already be in the set
+-   **effect** adds shortened url to list
+
+update (shortUrl: String)
+
+-   **requires** shortened url to exist in set
+-   **effect** increments count timesAccessed for shortened URL
+
+delete (shortUrl: String)
+
+-   **requires** shortened url to exist in set
+-   **effect** removes shortened url from the list
+
+lookup (user: User, shortUrl: String)
+
+-   **requires** shortened url to exist in set
+-   **effect** returns the number of times the url was accessed
+
+2.
 
 -   create shortening -> create new analytic for it, add to created by
+
+**sync** createMetaData
+
+**when** UrlShortening.register(): (shortUrl)
+
+**then** UserUrls.addShortening()
+UrlMetaData.create()
+
 -   shortening translated to target -> increment
+
+**sync** incrementVisitCount
+
+**when** UrlShortening.lookup(shortUrl: String): (targetUrl: String)
+
+**then** UrlMetaData.update(shortUrl)
+
 -   user examines analytics -> return only their url analytics
+
+**sync** getMetaData
+
+**when** Request.lookupMetaData(shortUrl: String)
+
+**then** UserUrls.authorize(user: User, shortUrl: String)
 
 3.
 
--   possible, change sync for registering (check if string provided, generate if not)
--   possible, as mentioned earlier, use numbers to keep track of which words have been taken from a list of words
--   not necessary, since analytics should only be avialable to the user that created the shortened URl. Other people do not need to see the total amount of times other people have visited the site.
--   not necessary, partially done in the randomized string process
--   could track them by something other than an user account, for ex, an email
+-   To allow users to create their own short URLs, during the registering sync, we check to see if they provide a string. If they do not, then we generate a nonce for them, else we use the string given.
+    possible, change sync for registering (check if string provided, generate if not)
+-   To use a word as a nonce, we can add a new concept that saves or has access to a list of words. The concept will have a state to keep track of which words it has already used, similar to the nonce generation concept we have.
+-   Adding the target URl to the analytic sis not needed because multiple users might have made shortened URLs for the same target URL and they do not need to see the combined analytic of how many visits/clicks they got all together for that target URL. Furthermore, analytics for a URL should only be viewable to the user who created it, so grouping together all the shorten URLs with the same target URL would not be a good idea.
+-   Generating short URLs that are not easily guessed can be done though the nonce generation. It can generate a random string, which would make it harder to guess.
+-   To allow unregisterd users to view analytics on their URLs, we can ask them to provide some sort of identification, such as email or phone number. When they attempt to access their analytics, we cna send them a verification code/email to the contact information. This in a way can work as an alternative to registering. We would need a new concept to keep track of these users, saving in the state the set of such users and their contact info. It would have actions to add, remove, and vertify people.
