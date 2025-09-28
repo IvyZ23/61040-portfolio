@@ -19,6 +19,7 @@ Some fun facts about me:
 ## Assignments:
 
 -   [Link to Assignment 1](assignments/assignment1.md)
+-   [Link to Assignment 2](assignments/assignment2.md)
 
 ## Problem Sets:
 
