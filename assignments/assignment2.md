@@ -74,11 +74,7 @@ authenticate (username: String, password: String): (user: User)
 
 **purpose** keep details about a trip all in one place
 
-**principle** after a user creates a trip for a group,
-the user can keep add and remove participants to the group,
-record the location and time the trip will occur. Users can
-update their budget for the trip. The creator of the trip can
-finalize the trip once no more changes are needed or delete the trip
+**principle** a user creates a trip and keeps track of the destination and date the trip will take place. They can add and remove participants to the trip and keep track of the budget for each participant. The creator of the trip can finalize the trip once no more changes are needed or delete the trip
 if it is no longer happening.
 
 **state**
@@ -362,10 +358,10 @@ Trip planning page:
 
 A user is excited to plan a summer trip with their friends, but quickly becomes overwhelmed when the group chat floods with conflicting messages. Everyone is suggesting destinations, proposing different weeks, and throwing out their budgets. The user feels frustrated, unsure how to keep track of all the information or how to settle on an idea.
 
-The user signs up for our group trip planning app, GroupGetaway, and clicks the “+” button in the bottom right corner of the home page. They set up two quick polls: one for the trip’s destination, with options like Rome, Barcelona, and Paris, and another for possible date ranges in June and July. Once the poll has been created, the user shares the poll with their friends.
+The user signs up for our group trip planning app, GroupGetaway, and clicks the “+” button in the bottom right corner of the home page. They set up two polls: one for the trip’s destination, with options like Rome, Barcelona, and Paris, and another for possible date ranges in June and July. Once the poll has been created, the user shares the poll with their friends.
 
 Within a day, the user checks the poll results in the app and sees that Rome in mid-June has emerged as the confirmed choice. Relieved, they close the poll, and GroupGetaway automatically creates a new trip planner for the group. All their friends are added as members. The friends click into the trip planner from the home page and the app prompts each to enter their personal budget.
 
 Once budgets are visible, the group begins adding potential hotels, flights, and activities to the trip’s itinerary by clicking the plus button in the expenses section of the trip planning page. Each suggestion appears as a pending experience, with estimated costs attached. Friends vote on whether to include them, and the user watches as the itinerary takes shape: the Colosseum tour and pasta-making class are confirmed, while more expensive activities, like a hot-air balloon ride, are politely voted down. The budgeting tool tracks expenses as they’re added, showing everyone what the total trip cost will look like and allows the friends to decide how costs are to be split.
 
-After a week of back-and-forth planning, the group has a finalized itinerary that fits everyone’s budget . The user finalizes the trip, knowing the plan can sitll be easily accessed during travel. What began as a chaotic stream of messages is now an organized, shared trip plan that everyone feels good about. Confident and stress-free, the group starts preparing for their Roman adventure, knowing they can open GroupGetaway anytime to stay on track.
+After a week of back-and-forth planning, the group has a finalized itinerary that fits everyone’s budget . The user finalizes the trip, knowing the plan can sitll be easily accessed during travel. Confident and stress-free, the group starts preparing for their Roman adventure, knowing they can open GroupGetaway anytime to stay on track.
