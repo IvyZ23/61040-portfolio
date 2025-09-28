@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-**Trips and Vacation** - I find traveling very fun, esspcially with friends and family. It's a great way to unwind, explore places I've never gone before, and gain new experiences.
+**Trips and Vacation** - I find traveling very fun, especially with friends and family. It's a great way to unwind, try new food, explore places I've never gone before, and gain new experiences.
 
 ### Problem
 
@@ -11,8 +11,8 @@
 ### Stakeholders
 
 -   Trip Participants – friends or family who want to go on trips together but struggle with the coordination process
--   Trip Organizers – person in the group who usually takes on the responsibility of coordinating logistics and faces most of the stress.
--   Travel Service Providers (airlines, hotels, activity companies) – affected when group bookings get delayed, changed, or canceled because of unorganized planning
+-   Trip Organizers – person in the group who usually takes on the responsibility of coordinating logistics and faces most of the stress
+-   Travel Service Providers (airlines, hotels, activity companies) – affected when group bookings get delayed, changed, or canceled because of disorganized planning
 
 ### Evidence
 
@@ -33,38 +33,60 @@
 
 ## Application Pitch
 
-Planning group trips should be fun, but too often it becomes stressful with long text threads, confusion over dates, disagreements about where to go, and messy cost splitting. **GroupGetaway** makes planning seamless so the only thing groups need to worry about is having a good time.
+Group trips are fun, but planning for them is often not. Differing preferences on destination, dates, and cost splitting can become overwhelming, espcially when these pieces of information are scattered everywhere. **GroupGetaway** makes planning seamless so the only thing groups need to worry about for their trip is having a good time.
 
-**Polling Made Simple**– GroupGetaway lets trip members vote on dates, destinations, and activities. This ensures decisions are made fairly and efficiently. For trip participants, this means less back-and-forth and faster planning. For trip organizers, it removes the burden of trying to please everyone. Travel service providers benefit because clearer decisions lead to fewer last-minute cancellations.
+**Planning Made Simple** – GroupGetaway allows trip members to vote on dates, destinations, and activities. This ensures decisions are made fairly and efficiently. For trip participants, this means faster planning. For trip organizers, it removes the burden of trying to please everyone. Travel service providers benefit because clearer decisions lead to fewer last minute cancellations.
 
-**Smart Budgeting & Cost Splitting** – Money is one of the biggest sources of stress in group trips. With GroupGetaway, everyone sets a personal budget, and the app keeps track of shared costs automatically. Expenses can be split evenly or adjusted based on who will pay for what. Trip participants gain transparency, organizers save time, and fewer financial misunderstandings reduce stress during and after the trip.
-
-**Shared Itinerary Builder** – Once dates, destinations, and budgets are set, GroupGetaway provides a shared trip timeline that includes travel details, lodging, and activities. Everyone can see what’s planned. Trip participants know exactly what’s happening, organizers stay on top of logistics, and service providers benefit from smoother, timely bookings.
-
-With GroupGetaway, groups can stop stressing about logistics and start looking forward to their adventures.
+**Smart Budgeting and Cost Splitting** – Money is one of the biggest sources of stress in group trips. With GroupGetaway, everyone sets a personal budget and the app will keep track of shared costs. Expenses can be split evenly or adjusted based on who will pay for what. Trip participants gain transparency and stress less before and during the trip. Organizers save time.
 
 ## Concept Design
 
-concept PasswordAuthentication
-purpose limit access to known users
-principle after a user registers with a username and a password,
+**concept** PasswordAuthentication
+
+**purpose** limit access to known users and limit acccess each user has
+
+**principle** after a user registers with a username and a password,
 they can authenticate with that same username and password
 and be treated each time as the same user
-state
-a set of Users with - a username String - a password String
-actions
-register (username: String, password: String): (user: User) - **requires** username does not already exist - **effects** creates new user
-authenticate (username: String, password: String): (user: User) - **requires** user with username and password to exists - **effects** returns that user
 
-concept TripPlanner [User]
+**state**
 
-purpose Keep track of who is going on a trip and what activities the trip will entail
+a set of Users with
 
-principle A user creates a trip for a group. The user and the group can add and choose activities to do for the trip.
+-   a username String
+-   a password String
 
-state
+**actions**
+
+register (username: String, password: String): (user: User)
+
+-   **requires** username does not already exist
+-   **effects** creates new user
+
+authenticate (username: String, password: String): (user: User)
+
+-   **requires** user with username and password to exists
+-   **effects** returns that user
+
+\
+\
+**concept** TripPlanner [User]
+
+**purpose** keep details about a trip all in one place
+
+**principle** after a user creates a trip for a group,
+the user can keep add and remove participants to the group,
+record the location and time the trip will occur. Users can
+update their budget for the trip. The creator of the trip can
+finalize the trip once no more changes are needed or delete the trip
+if it is no longer happening.
+
+**state**
+
 a set of Trips with
 
+-   a name String
+-   a finalized Flag
 -   an owner User
 -   a set of Pariticipants
 -   a destination String
@@ -75,22 +97,55 @@ a set of Participants with
 -   a user User
 -   a budget Number
 
-action
-create(user:User, destination: String, dataRange: DataRange)
+**action**
 
-addParticipant(user: User, budget: Number)
+create(user:User, destination: String, dataRange: DataRange, name: String): Trip
 
-updateParticipant(user: User, budget: Number)
+-   **requires** trip under user with same destination and date range not to already exist
+-   **effects** creates new trip
 
-removeParticipant(user: User, budget: Number)
+update(user: User, trip: Trip, destination: String, date: DateRange, name: String)
 
-concept PlanItinerary [Trip]
+-   **requires** trip that belongs to user to exist
+-   **effects** updates trip info
 
-purpose Keep track of and agree on activities to do on a trip
+finalize(user: User, trip: Trip, finalize: Flag)
 
-principle An itinerary is created for a trip. Users can add events to the intinerary, which needs to be approved to be officially added to the itinerary.
+-   **requires** trip that belongs to user to exist
+-   **effects** updates finalized flag of trip
 
-state
+delete(user: User, trip: Trip)
+
+-   **requires** trip that belongs to user to exist
+-   **effects** deletes trip
+
+addParticipant(user: User, trip: Trip)
+
+-   **requires** user to not already exist in trip
+-   **effects** adds user to trip
+
+updateParticipant(user: User, budget: Number, trip: Trip)
+
+-   **requires** user to exist as a participant of trip
+-   **effects** updates user info in trip
+
+removeParticipant(user: User, trip: Trip)
+
+-   **requires** user to exist as a participant of trip
+-   **effects** removes user from trip
+
+\
+\
+**concept** PlanItinerary [Trip]
+
+**purpose** allow for easier itinerary crafting between multiple people
+
+**principle** an itinerary is created for a trip. Users can add and remove events from
+the intinerary. Added events await approval before being offically added. If it is not
+approved, it will not be added to the itinerary.
+
+**state**
+
 a set of Itineraries with
 
 -   a trip Trip
@@ -104,30 +159,52 @@ a set of Events with
 -   a pending Flag
 -   an approved Flag
 
-action
+**action**
+
 create(trip:Trip): Itinerary
 
-addEvent(name: String, cost: Number)
+-   **requires** itinerary for trip to not already exist
+-   **effects** creates new itinerary for trip
 
-updateEvent(event: Event, approved: Flag)
+addEvent(name: String, cost: Number, itinerary: Itinerary)
 
-finalizeItinerary(intinerary)
+-   **effects** add new pending event to the itinerary
 
---
+updateEvent(event: Event, name: String, cost: Number, itinerary: Itinerary)
 
-concept Polling [User, Option]
+-   **requires** event in itinerary to exist
+-   **effects** updates event
 
-purpose Vote to see what the majority agrees on to make a decision
+approveEvent(event: Event, approved: Flag, itinerary: Itinerary)
 
-principle A user creates a poll and invites other users to it. The users can vote on what destinations and times they want to go on a trip
+-   **requires** event to exist in itinerary
+-   **effects** sets approval flag for itinerary and update pending to false
 
-state
+finalizeItinerary(intinerary: Itinerary, finalized: Flag)
+
+-   **requires** itinerary to exist
+-   **effects** sets itinerary finalized to given flag
+
+\
+\
+**concept** Polling [User, Option]
+
+**purpose** use majority vote to make a decision
+
+**principle** a user creates a poll and adds or removed options to it.
+They add and remove users to the poll. The users can vote on the options. Once the
+poll is closed, the result is finalized.
+
+**state**
+
 a set of Polls with
 
+-   a name String
 -   a set of Users
 -   a set of Options
 -   a creator User
 -   a set of Votes
+-   a closed Flag
 
 a set of Options with
 
@@ -138,37 +215,69 @@ a set of Votes with
 -   a user User
 -   a vote Option
 
-actions
-create(user: User): Poll
+**actions**
+
+create(user: User, name: String): Poll
+
+-   **requires** a poll under the user with the same name not to already exist
+-   **effects** creates new poll
 
 addOption(poll: Poll, option: Option)
 
+-   **requires** option to not already exist in poll
+-   **effects** adds option to poll
+
 removeOption(poll: Poll, option: Option)
+
+-   **requires** option to exist in poll
+-   **effects** removes option from poll
 
 addUser(user)
 
+-   **requires** user to not already be added to poll
+-   **effects** adds user to poll
+
 removeUser(user)
 
-addVote(user, vote: Option)
+-   **requires** user to already be added to poll
+-   **effects** removes user from poll
 
-updateVote(user, vote: Option)
+addVote(user: User, vote: Option, poll: Poll)
 
-close(poll: Poll, user: User)
+-   **requires** user and option to exist in poll and poll to not be closed
+-   **effects** adds new vote to poll
 
-calcWinner(poll: Poll): Option
+updateVote(user: User, new: Option, poll: Poll)
 
-concept CostSplitting [Itinerary, Item]
+-   **requires** user's vote to exist in poll and poll to not be closed
+-   **effects** updates the user's vote with new option
 
-purpose Allow expenses to be split amongst users
+close(user: User, poll: Poll)
 
-principle A user creates an expense. Other users can add themselves as a contributor and cover a certain amount of the expense.
+-   **requires** poll to exist and the user to be the owner
+-   **effects** closes poll
 
-state
+getResult(poll: Poll): Option
+
+-   **requires** poll to exist
+-   **effects** returns the highest voted option
+
+\
+\
+**concept** CostSplitting [Itinerary, Item]
+
+**purpose** allow for easier planning on how an expense would be paid for
+
+**principle** An expense is created. Users can add themselves as
+a contributor and cover a certain amount of the expense. Once the expense
+has been fully covered, users can no longer contribute.
+
+**state**
+
 a set of Expenses with
 
 -   an item Item
--   a total Number
--   a itinerary Itinerary
+-   a cost Number
 -   a set of Contributors
 -   a covered Flag
 
@@ -177,34 +286,86 @@ a set of Contributors
 -   a user User
 -   a amount Number
 
-actions
-create(itinerary: Itinerary, item: Item, cost: Number): Expense
+**actions**
 
-close(user, expense)
+create(item: Item, cost: Number): Expense
+
+-   **requires** item to not already be added as an expense
+-   **effects** creates new expense
+
+remove(expense: Expense)
+
+-   **requires** expense to exist
+-   **effects** deletes expense and contributions associated with it
 
 addContribution(user: User, expense: Expense, amount: Number)
 
-removeContribution(user: User, expense: Expense)
+-   **requires** expense to exist and amount to not be more than what is needed
+-   **effects** if user already exists as contributor, merge the amounts, else add user as a new contributor
 
--   syncs
+updateContribution(user: User, new: Number, expense: Expense)
 
-sync createTrip
-when DestinatonPolling.close()
-DatePolling.close()
-DestinationPolling.calcWinner(): (destination: Option)
-DatePolling.calcWinner(): (date: Option)
-then TripPlanner.create(user, destination, date)
+-   **requires** user to exist as a contributor for expense
+-   **effects** updates user's contribution amount
 
-sync createItinerary
-when TripPlanner.create(): Trip
-then PlanIntinerary(trip: Trip)
+\
+\
+**syncs**
 
-sync eventExpense
-when PlanItinerary.addEvent()
-then CostSplitting.create(intinerary, item, cost: Number)
+**sync** createTrip
+
+**when** Polling.close() for trip destination
+
+Polling.close() for trip dates
+
+Polling.getResult() for trip desintation: (destination: String)
+
+Polling.getResult() for trip dates: (date: DateRange)
+
+**then** TripPlanner.create(user, destination, date)
+
+\
+\
+**sync** createItinerary
+
+**when** TripPlanner.create(): Trip
+
+**then** PlanIntinerary(trip: Trip)
+
+\
+\
+**sync** eventExpense
+
+**when** PlanItinerary.addEvent()
+
+**then** CostSplitting.create(intinerary: Itinerary, item： Item, cost: Number)
+
+\
+\
+Having user accounts and authenication ensures that users are only modifying the trips they're part of. It will also limit them to voting for polls they're added to and modifying itineraries of trips they're in. The Poll concept is used to make decisions for trips and trip itineraries through majority vote. The CostSplitting concept would allow users to divide the cost of each component of the trip amongst themselves. The Items in CostSplitting can be activities/experiences added to itineraries. The TripPlanner and PlanItinerary concepts are core to the app because they are what allow users to keep track of and customize their trip.
 
 ## UI Sketches
 
+Home page:
+![home page](/assets/assignment2_1.jpg)
+
+Create poll page:
+![home page](/assets/assignment2_2.jpg)
+
+Poll voting page:
+![home page](/assets/assignment2_3.jpg)
+
+Trip planning page:
+![home page](/assets/assignment2_4.jpg)
+
 ## User Journey
 
-A user is planning to have a trip with their friends. There are too many things to keep track of, including ideas of where to go and when to go. The user opens our trip planning app and clicks the plus button on the bottom right of the screen to create a new poll. They input the destinations and dates their friends were suggesting and clicks "Create". The poll is sent out to their friends. The app shares the poll with their friends. Their friends select the options they want on the polls page and click "Submit". Once the poll closes, a trip planner is created for them. On the page, the user and their friends can click "Edit" next to their profiles on the sidebar to update their budgets. They can also click "Add New" in the itinerary section to create a new poll for an activity. They input the activity's name and budget needed. The rest of the group vote whether they want it or not. Once it is decided, the user and their friends can divide the cost for the activity. Once the user thinks planning has been finalized, they can close planning for the trip. The user is satified, as they didn't need to deal with long chats and disorganized information.
+A user is excited to plan a summer trip with their friends, but quickly becomes overwhelmed when the group chat floods with conflicting messages. Everyone is suggesting destinations, proposing different weeks, and throwing out their budgets. The user feels frustrated, unsure how to keep track of all the information or how to settle on an idea.
+
+The user signs up for our group trip planning app, GroupGetaway, and clicks the “+” button in the bottom right corner of the home page. They set up two quick polls: one for the trip’s destination, with options like Rome, Barcelona, and Paris, and another for possible date ranges in June and July. Once the poll has been created, the user shares the poll with their friends.
+
+Within a day, the user checks the poll results in the app and sees that Rome in mid-June has emerged as the confirmed choice. Relieved, they close the poll, and GroupGetaway automatically creates a new trip planner for the group. All their friends are added as members. The friends click into the trip planner from the home page and the app prompts each to enter their personal budget.
+
+Once budgets are visible, the group begins adding potential hotels, flights, and activities to the trip’s itinerary by clicking the plus button in the expenses section of the trip planning page. Each suggestion appears as a pending experience, with estimated costs attached. Friends vote on whether to include them, and the user watches as the itinerary takes shape: the Colosseum tour and pasta-making class are confirmed, while more expensive activities, like a hot-air balloon ride, are politely voted down. The budgeting tool tracks expenses as they’re added, showing everyone what the total trip cost will look like and allows the friends to decide how costs are to be split.
+
+After a week of back-and-forth planning, the group has a finalized itinerary that fits everyone’s budget . The user finalizes the trip, knowing the plan can sitll be easily accessed during travel. What began as a chaotic stream of messages is now an organized, shared trip plan that everyone feels good about. Confident and stress-free, the group starts preparing for their Roman adventure, knowing they can open GroupGetaway anytime to stay on track.
